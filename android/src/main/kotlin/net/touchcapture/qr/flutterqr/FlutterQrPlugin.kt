@@ -13,6 +13,7 @@ class FlutterQrPlugin : MethodCallHandler {
                     .platformViewRegistry()
                     .registerViewFactory(
                             "net.touchcapture.qr.flutterqr/qrview", QRViewFactory(registrar))
+            QRPhotoDecoder(registrar)
         }
     }
 
