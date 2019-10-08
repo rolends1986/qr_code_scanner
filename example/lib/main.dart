@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_code_scanner/qr_scanner_overlay_shape.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:qr_code_scanner/qr_code_decoder.dart';
 
 void main() => runApp(MaterialApp(home: QRViewExample()));
 
@@ -120,6 +122,15 @@ class _QRViewExampleState extends State<QRViewExample> {
                           },
                           child: Text('resume', style: TextStyle(fontSize: 20)),
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(8.0),
+                        child: RaisedButton(
+                          onPressed: () {
+                            _openPicker();
+                          },
+                          child: Text('image', style: TextStyle(fontSize: 20)),
+                        ),
                       )
                     ],
                   ),
@@ -139,6 +150,28 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   _isBackCamera(String current) {
     return back_camera == current;
+  }
+
+  _openPicker() async {
+    try {
+      var resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+      );
+      if(resultList.length>0){
+         var qrResult=await QRDecoder(await resultList.first.filePath).decode();
+         if(qrResult!=null && qrResult!=""){
+           setState(() {
+             qrText = qrResult;
+           });
+         }else{
+           setState(() {
+             qrText = "not found qr message";
+           });
+         }
+      }
+    } on Exception catch (e) {
+
+    }
   }
 
   void _onQRViewCreated(QRViewController controller) {
